@@ -5,8 +5,8 @@ import (
 )
 
 type ProxyService interface {
-	AddDomain(string, string) error
-	DeleteDomain(string, string) error
+	//AddDomain(string, string) error
+	//DeleteDomain(string, string) error
 }
 
 type config struct {
