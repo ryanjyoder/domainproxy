@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"net/http/httputil"
+	"net/url"
 
 	"bitbucket.org/ryanjyoder/domainproxy"
 )
@@ -22,5 +23,7 @@ func addDomains(mux *domainproxy.DomainMux) {
 
 	tekDomain := "tekcitadel.com"
 	mux.SetHandler(tekDomain, tekProxy)
-	mux.SetHandler("shell.ryanjyoder.com", "10.247.165.131:38941")
+
+	url, _ := url.Parse("10.247.165.131:38941")
+	mux.SetHandler("shell.ryanjyoder.com", httputil.NewSingleHostReverseProxy(url))
 }
