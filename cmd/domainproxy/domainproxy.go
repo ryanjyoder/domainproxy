@@ -10,9 +10,7 @@ import (
 func main() {
 	mux := domainproxy.NewDomainMux()
 	go addDomains(mux)
-
 	http.ListenAndServe(":8080", mux)
-
 }
 
 func addDomains(mux *domainproxy.DomainMux) {
@@ -24,4 +22,5 @@ func addDomains(mux *domainproxy.DomainMux) {
 
 	tekDomain := "tekcitadel.com"
 	mux.SetHandler(tekDomain, tekProxy)
+	mux.SetHandler("shell.ryanjyoder.com", "10.247.165.131:38941")
 }
