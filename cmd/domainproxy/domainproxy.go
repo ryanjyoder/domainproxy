@@ -24,6 +24,6 @@ func addDomains(mux *domainproxy.DomainMux) {
 	tekDomain := "tekcitadel.com"
 	mux.SetHandler(tekDomain, tekProxy)
 
-	url, _ := url.Parse("http://10.247.165.131:38941")
+	url, _ := url.Parse("http://10.111.74.111:8080")
 	mux.SetHandler("shell.ryanjyoder.com", httputil.NewSingleHostReverseProxy(url))
 }
