@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	message := "Welcome to the test server!"
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, message)
 		//fmt.Println(sURL, "path:", r.URL.String())
