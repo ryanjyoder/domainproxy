@@ -13,7 +13,7 @@ import (
 	"regexp"
 	"syscall"
 
-	"bitbucket.org/ryanjyoder/domainproxy"
+	"github.com/ryanjyoder/domainproxy"
 )
 
 func main() {
