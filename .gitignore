@@ -1,0 +1,18 @@
+# [os] OS & editor files
+Desktop.ini
+Thumbs.db
+._*
+*.DS_Store
+*~
+\#*\#
+.vscode
+
+# [build] Built files
+/build/
+/parts/
+/prime/
+/stage/
+.snapcraft/
+*.snap
+*.*.map
+
