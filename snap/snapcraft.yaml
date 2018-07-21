@@ -18,3 +18,10 @@ apps:
   domainproxy:
     command: domainproxy
     daemon: simple
+
+
+slots:
+  content:
+    content: socket-directory
+    write: 
+      - $SNAP_DATA
