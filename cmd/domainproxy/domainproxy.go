@@ -6,8 +6,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"net/http/httputil"
-	"net/url"
 	"os"
 	"os/signal"
 	"regexp"
@@ -17,12 +15,12 @@ import (
 )
 
 func main() {
-	mux := domainproxy.NewDomainMux()
-	loadStoredDomains(mux)
-	go http.ListenAndServe(":8080", mux)
-
+	myService, err := domainproxy.NewProxyServer()
+	if err != nil {
+		log.Fatal("could not start service:", err)
+	}
 	server := http.Server{
-		Handler: &myHandler{mux: mux},
+		Handler: &myHandler{service: myService},
 	}
 
 	unixListener, err := net.Listen("unix", "go.sock")
@@ -54,7 +52,7 @@ func main() {
 }
 
 type myHandler struct {
-	mux *domainproxy.DomainMux
+	service domainproxy.ProxyService
 }
 
 var getDomainRegex = regexp.MustCompile("/domain/([^/]+)$")
@@ -68,32 +66,16 @@ func (h *myHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	fmt.Println("request:", req.URL.String())
 	switch {
 	case req.Method == "GET" && getDomainRegex.MatchString(req.URL.String()):
-		isSet := h.mux.IsDomainSet(getDomainRegex.FindStringSubmatch(req.URL.String())[1])
+		domain := getDomainRegex.FindStringSubmatch(req.URL.String())[1]
+		isSet, _ := h.service.DomainExists(domain)
 		response, _ := json.Marshal(getResponse{IsSet: isSet})
 		w.Write(response)
 		return
 	case req.Method == "PUT" && putDomainRegex.MatchString(req.URL.String()):
 		args := putDomainRegex.FindStringSubmatch(req.URL.String())[1:]
-		backendURL, _ := url.Parse(args[0])
-		proxy := httputil.NewSingleHostReverseProxy(backendURL)
-		domain := args[0]
-		fmt.Println("setting:", domain, backendURL.String())
-		h.mux.SetHandler(domain, proxy)
+		h.service.AddDomain(args[0], args[1])
+		return
 	default:
 
 	}
-}
-
-func loadStoredDomains(mux *domainproxy.DomainMux) {
-	// first the "instance" should be launched
-	tekURL, _, _ := domainproxy.LaunchTestServer("Welcome to TekCitadel Server!")
-
-	//set up proxy
-	tekProxy := httputil.NewSingleHostReverseProxy(tekURL)
-
-	tekDomain := "tekcitadel.com"
-	mux.SetHandler(tekDomain, tekProxy)
-
-	url, _ := url.Parse("http://10.111.74.111:8080")
-	mux.SetHandler("shell.ryanjyoder.com", httputil.NewSingleHostReverseProxy(url))
 }
