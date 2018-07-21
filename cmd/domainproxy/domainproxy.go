@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"regexp"
 	"syscall"
 
@@ -22,8 +23,13 @@ func main() {
 	server := http.Server{
 		Handler: &myHandler{service: myService},
 	}
-
-	unixListener, err := net.Listen("unix", "go.sock")
+	socketDir := os.Getenv("SNAP_DATA")
+	fmt.Println("SNAP_DATA:", socketDir)
+	if socketDir == "" {
+		socketDir = "./"
+	}
+	socketPath := filepath.Join(socketDir, "go.sock")
+	unixListener, err := net.Listen("unix", socketPath)
 	// Create the socket to listen on:
 
 	if err != nil {
