@@ -17,36 +17,37 @@ func launchContainer() error {
 	if err != nil {
 		log.Println("couldnt connect to unix socket", err)
 		return err
-		// Connect to the remote SimpleStreams server
-		d, err := lxd.ConnectSimpleStreams("https://images.linuxcontainers.org", nil)
-		if err != nil {
-			return err
-		}
-
-		// Resolve the alias
-		alias, _, err := d.GetImageAlias("centos/7")
-		if err != nil {
-			return err
-		}
-
-		// Get the image information
-		image, _, err := d.GetImage(alias.Target)
-		if err != nil {
-			return err
-		}
-
-		// Ask LXD to copy the image from the remote server
-		op, err := c.CopyImage(d, *image, nil)
-		if err != nil {
-			return err
-		}
-
-		// And wait for it to finish
-		err = op.Wait()
-		if err != nil {
-			return err
-		}
-
-		return nil
 	}
+	// Connect to the remote SimpleStreams server
+	d, err := lxd.ConnectSimpleStreams("https://images.linuxcontainers.org", nil)
+	if err != nil {
+		return err
+	}
+
+	// Resolve the alias
+	alias, _, err := d.GetImageAlias("centos/7")
+	if err != nil {
+		return err
+	}
+
+	// Get the image information
+	image, _, err := d.GetImage(alias.Target)
+	if err != nil {
+		return err
+	}
+
+	// Ask LXD to copy the image from the remote server
+	op, err := c.CopyImage(d, *image, nil)
+	if err != nil {
+		return err
+	}
+
+	// And wait for it to finish
+	err = op.Wait()
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }
