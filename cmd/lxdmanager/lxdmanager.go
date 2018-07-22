@@ -47,5 +47,6 @@ func launchContainer() error {
 			return err
 		}
 
+		return nil
 	}
 }
