@@ -36,7 +36,7 @@ func launchContainer() error {
 		}
 
 		// Ask LXD to copy the image from the remote server
-		op, err := d.CopyImage(*image, c, nil)
+		op, err := c.CopyImage(d, *image, nil)
 		if err != nil {
 			return err
 		}
