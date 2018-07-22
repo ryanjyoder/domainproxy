@@ -13,7 +13,7 @@ func main() {
 
 func launchContainer() error {
 	// Connect to LXD over the Unix socket
-	c, err := lxd.ConnectLXDUnix("", nil)
+	c, err := lxd.ConnectLXDUnix("/var/snap/lxd/common/lxd/unix.socket", nil)
 	if err != nil {
 		return err
 	}
