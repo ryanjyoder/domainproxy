@@ -16,19 +16,19 @@ import (
 )
 
 func main() {
-	myService, err := domainproxy.NewProxyServer()
+	dataDir := os.Getenv("SNAP_DATA")
+	if dataDir == "" {
+		dataDir = "./"
+	}
+	domainList := filepath.Join(dataDir, "domainlist.tab")
+	myService, err := domainproxy.NewProxyServer(domainList)
 	if err != nil {
 		log.Fatal("could not start service:", err)
 	}
 	server := http.Server{
 		Handler: &myHandler{service: myService},
 	}
-	socketDir := os.Getenv("SNAP_DATA")
-	fmt.Println("SNAP_DATA:", socketDir)
-	if socketDir == "" {
-		socketDir = "./"
-	}
-	socketPath := filepath.Join(socketDir, "go.sock")
+	socketPath := filepath.Join(dataDir, "go.sock")
 	unixListener, err := net.Listen("unix", socketPath)
 	// Create the socket to listen on:
 
@@ -79,7 +79,7 @@ func (h *myHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	case req.Method == "PUT" && putDomainRegex.MatchString(req.URL.String()):
 		args := putDomainRegex.FindStringSubmatch(req.URL.String())[1:]
-		h.service.AddDomain(args[0], args[1])
+		h.service.AddDomain(args[0], "http://"+args[1])
 		return
 	default:
 
