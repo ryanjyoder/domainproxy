@@ -51,34 +51,13 @@ func launchContainer() error {
 		return err
 	}
 
-	// Container creation request
-	req := api.ContainersPost{
-		Name: "my-container",
-		Source: api.ContainerSource{
-			Type:  "image",
-			Alias: "centos/7",
-		},
-	}
-
-	// Get LXD to create the container (background operation)
-	opCreate, err := c.CreateContainer(req)
-	if err != nil {
-		return err
-	}
-
-	// Wait for the operation to complete
-	err = opCreate.Wait()
-	if err != nil {
-		return err
-	}
-
 	// Get LXD to start the container (background operation)
 	reqState := api.ContainerStatePut{
 		Action:  "start",
 		Timeout: -1,
 	}
 
-	opStart, err := c.UpdateContainerState("my-container", reqState, "")
+	opStart, err := c.UpdateContainerState("centos/7", reqState, "")
 	if err != nil {
 		return err
 	}
