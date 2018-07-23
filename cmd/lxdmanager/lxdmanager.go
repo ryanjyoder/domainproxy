@@ -19,38 +19,60 @@ func launchContainer() error {
 		log.Println("couldnt connect to unix socket", err)
 		return err
 	}
-	// Connect to the remote SimpleStreams server
-	d, err := lxd.ConnectSimpleStreams("https://images.linuxcontainers.org", nil)
-	if err != nil {
-		return err
-	}
+	/*
+		// Connect to the remote SimpleStreams server
+		d, err := lxd.ConnectSimpleStreams("https://images.linuxcontainers.org", nil)
+		if err != nil {
+			return err
+		}
 
-	// Resolve the alias
-	alias, _, err := d.GetImageAlias("centos/7")
-	if err != nil {
-		return err
-	}
+		// Resolve the alias
+		alias, _, err := d.GetImageAlias("centos/7")
+		if err != nil {
+			return err
+		}
 
-	// Get the image information
-	image, _, err := d.GetImage(alias.Target)
-	if err != nil {
-		return err
-	}
+		// Get the image information
+		image, _, err := d.GetImage(alias.Target)
+		if err != nil {
+			return err
+		}
 
-	// Ask LXD to copy the image from the remote server
-	op, err := c.CopyImage(d, *image, &lxd.ImageCopyArgs{
-		CopyAliases: true,
-	})
-	if err != nil {
-		return err
-	}
+		// Ask LXD to copy the image from the remote server
+		op, err := c.CopyImage(d, *image, &lxd.ImageCopyArgs{
+			CopyAliases: true,
+		})
+		if err != nil {
+			return err
+		}
 
-	// And wait for it to finish
-	err = op.Wait()
-	if err != nil {
-		return err
-	}
+		// And wait for it to finish
+		err = op.Wait()
+		if err != nil {
+			return err
+		}
 
+		// Container creation request
+		req := api.ContainersPost{
+			Name: "my-container",
+			Source: api.ContainerSource{
+				Type:  "image",
+				Alias: "centos/7",
+			},
+		}
+
+		// Get LXD to create the container (background operation)
+		opCreate, err := c.CreateContainer(req)
+		if err != nil {
+			return err
+		}
+
+		// Wait for the operation to complete
+		err = opCreate.Wait()
+		if err != nil {
+			return err
+		}
+	*/
 	// Get LXD to start the container (background operation)
 	reqState := api.ContainerStatePut{
 		Action:  "start",
