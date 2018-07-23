@@ -56,7 +56,7 @@ func launchContainer() error {
 		Name: "my-container",
 		Source: api.ContainerSource{
 			Type:  "image",
-			Alias: "centls/7",
+			Alias: "centos/7",
 		},
 	}
 
