@@ -76,7 +76,7 @@ func launchContainer() error {
 		Timeout: -1,
 	}
 
-	opStart, err := c.UpdateContainerState(name, reqState, "")
+	opStart, err := c.UpdateContainerState("my-container", reqState, "")
 	if err != nil {
 		return err
 	}
