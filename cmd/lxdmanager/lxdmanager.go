@@ -79,7 +79,7 @@ func launchContainer() error {
 		Timeout: -1,
 	}
 
-	opStart, err := c.UpdateContainerState("centos/7", reqState, "")
+	opStart, err := c.UpdateContainerState("core1", reqState, "")
 	if err != nil {
 		return err
 	}
