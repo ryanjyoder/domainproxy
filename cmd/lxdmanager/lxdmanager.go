@@ -5,6 +5,7 @@ import (
 	"log"
 
 	lxd "github.com/lxc/lxd/client"
+	"github.com/lxc/lxd/shared/api"
 )
 
 func main() {
@@ -44,6 +45,44 @@ func launchContainer() error {
 
 	// And wait for it to finish
 	err = op.Wait()
+	if err != nil {
+		return err
+	}
+
+	// Container creation request
+	req := api.ContainersPost{
+		Name: "my-container",
+		Source: api.ContainerSource{
+			Type:  "image",
+			Alias: "centls/7",
+		},
+	}
+
+	// Get LXD to create the container (background operation)
+	opCreate, err := c.CreateContainer(req)
+	if err != nil {
+		return err
+	}
+
+	// Wait for the operation to complete
+	err = opCreate.Wait()
+	if err != nil {
+		return err
+	}
+
+	// Get LXD to start the container (background operation)
+	reqState := api.ContainerStatePut{
+		Action:  "start",
+		Timeout: -1,
+	}
+
+	opStart, err := c.UpdateContainerState(name, reqState, "")
+	if err != nil {
+		return err
+	}
+
+	// Wait for the operation to complete
+	err = opStart.Wait()
 	if err != nil {
 		return err
 	}
